@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useSupabase } from '../contexts/SupabaseContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Activity, Clock, Package, AlertTriangle, UserCheck, Scan, Trash2 } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
@@ -9,7 +8,6 @@ import { Button } from './ui/button';
 import { useToast } from './ui/use-toast.jsx';
 
 const RealtimeActivity = () => {
-  const { onlineUsers, lastActivities, clearActivities } = useSupabase();
   const [newActivity, setNewActivity] = useState(null);
   const [highlightedActivity, setHighlightedActivity] = useState(null);
   const [isClearing, setIsClearing] = useState(false);
@@ -17,21 +15,22 @@ const RealtimeActivity = () => {
 
   // Efeito para destacar novas atividades
   useEffect(() => {
-    if (lastActivities && lastActivities.length > 0) {
-      const latestActivity = lastActivities[0];
-      if (latestActivity && latestActivity.id) {
-        setNewActivity(latestActivity.id);
-        setHighlightedActivity(latestActivity.id);
+    // Remover:
+    // if (lastActivities && lastActivities.length > 0) {
+    //   const latestActivity = lastActivities[0];
+    //   if (latestActivity && latestActivity.id) {
+    //     setNewActivity(latestActivity.id);
+    //     setHighlightedActivity(latestActivity.id);
         
-        // Remover o destaque após 3 segundos
-        const timer = setTimeout(() => {
-          setHighlightedActivity(null);
-        }, 3000);
+    //     // Remover o destaque após 3 segundos
+    //     const timer = setTimeout(() => {
+    //       setHighlightedActivity(null);
+    //     }, 3000);
         
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [lastActivities]);
+    //     return () => clearTimeout(timer);
+    //   }
+    // }
+  }, []); // Remover lastActivities da dependência
 
   const formatTimestamp = (isoString) => {
     const date = new Date(isoString);
@@ -54,24 +53,25 @@ const RealtimeActivity = () => {
   };
   
   const handleClearActivities = useCallback(async () => {
-    // Verificar se já está em processo de limpeza ou se não há atividades
-    if (isClearing) {
-      toast({
-        title: "Operação em andamento",
-        description: "Operação de limpeza já em andamento, aguarde...",
-        variant: "warning"
-      });
-      return;
-    }
+    // Remover:
+    // if (isClearing) {
+    //   toast({
+    //     title: "Operação em andamento",
+    //     description: "Operação de limpeza já em andamento, aguarde...",
+    //     variant: "warning"
+    //   });
+    //   return;
+    // }
     
-    if (!lastActivities || lastActivities.length === 0) {
-      toast({ 
-        title: "Nenhuma atividade", 
-        description: "Não há atividades para limpar.",
-        variant: "destructive"
-      });
-      return;
-    }
+    // Remover:
+    // if (!lastActivities || lastActivities.length === 0) {
+    //   toast({ 
+    //     title: "Nenhuma atividade", 
+    //     description: "Não há atividades para limpar.",
+    //     variant: "destructive"
+    //   });
+    //   return;
+    // }
 
     // Iniciar processo de limpeza
     setIsClearing(true);
@@ -87,8 +87,9 @@ const RealtimeActivity = () => {
         // Pequeno atraso para feedback visual
         await new Promise(resolve => setTimeout(resolve, 300));
         
+        // Remover:
         // Chamar a função de limpeza do Supabase
-        await clearActivities();
+        // await clearActivities();
         toast({
           title: "Atividades limpas",
           description: `Atividades em tempo real limpas com sucesso${attempt > 1 ? ` na tentativa ${attempt}` : ''}!`,
@@ -127,7 +128,7 @@ const RealtimeActivity = () => {
     setTimeout(() => {
       setIsClearing(false);
     }, 500);
-  }, [lastActivities, isClearing, clearActivities, toast]);
+  }, [isClearing, toast]); // Remover lastActivities da dependência
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4 border-2 border-primary">
@@ -137,7 +138,7 @@ const RealtimeActivity = () => {
           variant="destructive" 
           size="sm" 
           onClick={handleClearActivities} 
-          disabled={isClearing || !lastActivities || lastActivities.length === 0}
+          disabled={isClearing}
           className="flex items-center gap-1 h-8 text-xs"
         >
           {isClearing ? (
@@ -159,31 +160,35 @@ const RealtimeActivity = () => {
             <Activity className="h-5 w-5" />
             Atividades
             <Badge variant="secondary" className="ml-1">
-              {lastActivities ? lastActivities.length : 0}
+              {/* Remover: */}
+              {/* {lastActivities ? lastActivities.length : 0} */}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="users" className="flex items-center gap-2">
             <UserCheck className="h-5 w-5" />
             Usuários Online
             <Badge variant="secondary" className="ml-1">
-              {Object.values(onlineUsers).filter(user => user.online).length}
+              {/* Remover: */}
+              {/* {Object.values(onlineUsers).filter(user => user.online).length} */}
             </Badge>
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="activities" className="space-y-4">
           <ScrollArea className="h-[300px] rounded-md border p-2">
-            {lastActivities && lastActivities.length > 0 ? (
+            {/* Remover: */}
+            {/* {lastActivities && lastActivities.length > 0 ? ( */}
               <div className="space-y-2">
                 <AnimatePresence mode="wait">
-                  {lastActivities.map((activity, index) => (
+                  {/* Remover: */}
+                  {/* {lastActivities.map((activity, index) => ( */}
                     <motion.div
-                      key={activity.id || index}
+                      key={newActivity || 'no-activity'} // Use newActivity como chave
                       initial={{ opacity: 0, y: -2 }}
                       animate={{ 
                         opacity: 1, 
                         y: 0, 
-                        backgroundColor: highlightedActivity === activity.id ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+                        backgroundColor: highlightedActivity === newActivity ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
                       }}
                       exit={{ opacity: 0 }}
                       transition={{ 
@@ -193,49 +198,49 @@ const RealtimeActivity = () => {
                       }}
                       style={{
                         willChange: 'transform, opacity',
-                        transform: highlightedActivity === activity.id ? 'scale(1.005)' : 'scale(1)',
+                        transform: highlightedActivity === newActivity ? 'scale(1.005)' : 'scale(1)',
                         transformOrigin: 'top'
                       }}
-                      className={`flex items-start gap-3 p-3 border-b border-gray-100 dark:border-gray-700 last:border-0 rounded-md ${activity.type === 'duplicate' ? 'bg-red-50 dark:bg-red-900/20' : ''} ${activity.type === 'scan' ? 'bg-green-50 dark:bg-green-900/20' : ''}`}
+                      className={`flex items-start gap-3 p-3 border-b border-gray-100 dark:border-gray-700 last:border-0 rounded-md ${newActivity?.type === 'duplicate' ? 'bg-red-50 dark:bg-red-900/20' : ''} ${newActivity?.type === 'scan' ? 'bg-green-50 dark:bg-green-900/20' : ''}`}
                     >
-                      <div className="mt-1">{getActivityIcon(activity.type)}</div>
+                      <div className="mt-1">{getActivityIcon(newActivity?.type)}</div>
                       <div className="flex-1">
                         <div className="flex justify-between items-start">
                           <p className="text-sm font-medium">
-                            {activity.userName || activity.userEmail}
+                            {newActivity?.userName || newActivity?.userEmail}
                           </p>
-                          <Badge variant={activity.type === 'duplicate' ? 'destructive' : activity.type === 'scan' ? 'success' : 'secondary'} className="text-xs">
-                            {activity.type === 'scan' ? 'Escaneado' : activity.type === 'duplicate' ? 'Duplicado' : activity.type}
+                          <Badge variant={newActivity?.type === 'duplicate' ? 'destructive' : newActivity?.type === 'scan' ? 'success' : 'secondary'} className="text-xs">
+                            {newActivity?.type === 'scan' ? 'Escaneado' : newActivity?.type === 'duplicate' ? 'Duplicado' : newActivity?.type}
                           </Badge>
                         </div>
                         <p className="text-sm mt-1">
-                          {activity.message}
-                          {activity.packageCode && (
+                          {newActivity?.message}
+                          {newActivity?.packageCode && (
                             <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded ml-1 font-bold">
-                              {activity.packageCode}
+                              {newActivity.packageCode}
                             </span>
                           )}
-                          {activity.collectionName && (
+                          {newActivity?.collectionName && (
                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                              em {activity.collectionName}
+                              em {newActivity.collectionName}
                             </span>
                           )}
                         </p>
                         <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-2">
                           <Clock className="h-3 w-3 mr-1" />
-                          {formatTimestamp(activity.timestamp)}
+                          {formatTimestamp(newActivity?.timestamp)}
                         </div>
                       </div>
                     </motion.div>
-                  ))}
+                  {/* ))} */}
                 </AnimatePresence>
               </div>
-            ) : (
+            {/* ) : ( */}
               <div className="flex flex-col items-center justify-center h-full p-4">
                 <Activity className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-2" />
                 <p className="text-gray-500 dark:text-gray-400 text-sm">Nenhuma atividade registrada</p>
               </div>
-            )}
+            {/* )} */}
           </ScrollArea>
         </TabsContent>
         
@@ -243,26 +248,27 @@ const RealtimeActivity = () => {
           <ScrollArea className="h-[300px] rounded-md border p-2">
             <div className="space-y-3 p-1">
               <h3 className="font-semibold text-center mb-3">Usuários Ativos no Sistema</h3>
-              {Object.values(onlineUsers)
-                .filter(user => user.online)
-                .map((user, index) => (
+              {/* Remover: */}
+              {/* {Object.values(onlineUsers) */}
+                {/* .filter(user => user.online) */}
+                {/* .map((user, index) => ( */}
                   <motion.div
-                    key={index}
+                    key={newActivity || 'no-user'} // Use newActivity como chave
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: 0.1 }} // Simplificado para newActivity
                     className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 px-3 py-1 rounded-full text-sm"
                   >
                     <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                    {user.displayName || user.email}
+                    {newActivity?.displayName || newActivity?.email}
                   </motion.div>
-                ))}
-              {Object.values(onlineUsers).filter(user => user.online).length === 0 && (
+                {/* ))} */}
+              {/* {Object.values(onlineUsers).filter(user => user.online).length === 0 && ( */}
                 <div className="flex flex-col items-center justify-center w-full p-8">
                   <Users className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-2" />
                   <p className="text-gray-500 dark:text-gray-400 text-sm">Nenhum usuário online no momento</p>
                 </div>
-              )}
+              {/* )} */}
             </div>
           </ScrollArea>
         </TabsContent>

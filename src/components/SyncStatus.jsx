@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Wifi, WifiOff } from 'lucide-react';
-import { useSupabase } from '../contexts/SupabaseContext';
 
 const SyncStatus = () => {
-  const { onlineUsers } = useSupabase();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [lastSyncTime, setLastSyncTime] = useState(new Date());
   
@@ -38,7 +36,10 @@ const SyncStatus = () => {
   };
   
   // Contar usuários online
-  const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length : 0;
+  // Remover:
+  // const onlineUsersCount = onlineUsers ? Object.keys(onlineUsers).length : 0;
+  // Se necessário, use useFirebase do contexto Firebase, ou apenas as props recebidas.
+  const onlineUsersCount = 0; // Placeholder, as useSupabase was removed
   
   return (
     <div className="flex items-center justify-between text-xs text-muted-foreground p-2 bg-muted/30 rounded-md">

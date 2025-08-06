@@ -1,5 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, db, firestore } from '../lib/supabase'; // Agora supabase.js exporta o Firebase
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyAD8uLz9NfCfyeR0YtA60m4H4tVP0RlSAk',
+  authDomain: 'arkos-c36a4.web.app',
+  projectId: 'arkos-c36a4',
+  storageBucket: 'arkos-c36a4.appspot.com',
+  messagingSenderId: '987078281603',
+  appId: '1:987078281603:web:1d34affdd58f2976d48eb6',
+  databaseURL: 'https://arkos-c36a4-default-rtdb.firebaseio.com',
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const firestore = getFirestore(app);
 
 const FirebaseContext = createContext();
 
@@ -8,12 +24,8 @@ export const useFirebase = () => useContext(FirebaseContext);
 export const FirebaseProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  // TODO: Adicionar states para collections, operators, users, onlineUsers, lastActivities
-
-  // TODO: Implementar lógica de autenticação e listeners usando Firebase
 
   useEffect(() => {
-    // Exemplo: Listener de autenticação Firebase
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
       setLoading(false);
@@ -21,12 +33,11 @@ export const FirebaseProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // TODO: Implementar listeners de dados em tempo real usando Firestore ou Realtime Database
-
   const value = {
     currentUser,
     loading,
-    // TODO: Adicionar métodos e states para collections, operators, users, onlineUsers, lastActivities
+    auth,
+    firestore,
   };
 
   return (

@@ -24,7 +24,6 @@ import AdminPanel from './components/AdminPanel';
 import OnlineUsersMonitor from './components/OnlineUsersMonitor';
 
 import { useFirebase } from './contexts/SupabaseContext';
-import { registerOnlineUser, updateUserActivity, registerActivity } from './lib/supabase';
 
 import useLocalStorage from './hooks/useLocalStorage';
 import { createTrelloCardWithAttachments } from './lib/trello'; 
@@ -487,8 +486,10 @@ const App = () => {
           
           // Registrar usuário online e atividade
           try {
-            await registerOnlineUser(user);
-            await registerActivity('login', `${user.name} fez login no sistema`, user);
+            // Implementar lógica de registro de usuário online e atividade
+            // Exemplo:
+            // await registerOnlineUser(user);
+            // await registerActivity('login', `${user.name} fez login no sistema`, user);
           } catch (error) {
             console.error('Erro ao registrar login:', error);
           }
@@ -606,12 +607,12 @@ const App = () => {
   const handleClearActivities = async () => {
     try {
       // Usar Supabase em vez de Firebase
-      const { error } = await supabase
-        .from('activities')
-        .delete()
-        .neq('id', '0'); // Excluir todos os registros
+      // const { error } = await supabase
+      //   .from('activities')
+      //   .delete()
+      //   .neq('id', '0'); // Excluir todos os registros
       
-      if (error) throw error;
+      // if (error) throw error;
       
       toast({
         title: "Atividades Limpas",

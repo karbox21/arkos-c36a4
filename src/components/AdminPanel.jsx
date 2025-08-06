@@ -5,8 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs'
 import { Shield, Trash2, Users, Database, Calendar as CalendarIcon, BarChart, UserX, RefreshCw, AlertTriangle, 
   Settings, Download, Upload, FileText, Bell, Clock, HardDrive, Zap, Activity, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useSupabase } from '../contexts/SupabaseContext';
-import { supabase } from '../lib/supabase';
+import { useFirebase } from '../contexts/SupabaseContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../components/ui/tooltip';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
@@ -38,7 +37,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [filteredCollections, setFilteredCollections] = useState({});
-  const { currentUser } = useSupabase();
+  const { currentUser } = useFirebase();
 
   // Carregar dados quando o painel for aberto
   useEffect(() => {
@@ -88,23 +87,18 @@ const AdminPanel = ({ isOpen, onClose }) => {
     try {
       // Carregar usuários com tratamento de erro melhorado
       try {
-        const { data: usersData, error: usersError } = await supabase
-          .from('users')
-          .select('*');
-          
-        if (!usersError && usersData) {
-          const usersArray = usersData.map(data => ({
-            uid: data.id,
-            ...data,
-            lastLogin: data.lastLogin ? new Date(data.lastLogin) : null,
-            createdAt: data.createdAt ? new Date(data.createdAt) : null,
-          }));
-          setUsers(usersArray);
-          setFilteredUsers(usersArray);
-        } else {
-          setUsers([]);
-          setFilteredUsers([]);
-        }
+        const usersSnapshot = await currentUser.collection('users').get();
+        const usersArray = [];
+        usersSnapshot.forEach(doc => {
+          usersArray.push({
+            uid: doc.id,
+            ...doc.data(),
+            lastLogin: doc.data().lastLogin ? new Date(doc.data().lastLogin) : null,
+            createdAt: doc.data().createdAt ? new Date(doc.data().createdAt) : null,
+          });
+        });
+        setUsers(usersArray);
+        setFilteredUsers(usersArray);
       } catch (userError) {
         console.error('Erro ao carregar usuários:', userError);
         setError(prev => prev + '\nErro ao carregar usuários: ' + userError.message);
@@ -119,19 +113,18 @@ const AdminPanel = ({ isOpen, onClose }) => {
         // Usar Promise.all para carregar coleções em paralelo
         await Promise.all(collectionsToLoad.map(async (collection) => {
           try {
-            const { data, error } = await supabase
-            .from(collection)
-            .select('*');
-            
-            if (!error && data) {
-              collectionsData[collection] = data.map(item => ({
-                ...item,
-                createdAt: item.createdAt ? new Date(item.createdAt) : null,
-                updatedAt: item.updatedAt ? new Date(item.updatedAt) : null,
-              }));
-            } else {
-              collectionsData[collection] = [];
-            }
+            const collectionRef = currentUser.collection(collection);
+            const snapshot = await collectionRef.get();
+            const items = [];
+            snapshot.forEach(doc => {
+              items.push({
+                ...doc.data(),
+                id: doc.id,
+                createdAt: doc.data().createdAt ? new Date(doc.data().createdAt) : null,
+                updatedAt: doc.data().updatedAt ? new Date(doc.data().updatedAt) : null,
+              });
+            });
+            collectionsData[collection] = items;
           } catch (collectionError) {
             console.error(`Erro ao carregar coleção ${collection}:`, collectionError);
             collectionsData[collection] = [];
@@ -149,24 +142,13 @@ const AdminPanel = ({ isOpen, onClose }) => {
 
       // Carregar atividades recentes com tratamento de erro melhorado
       try {
-        const { data: activitiesData, error: activitiesError } = await supabase
-          .from('activities')
-          .select('*');
-          
-        if (!activitiesError && activitiesData) {
-          // Formatar os dados das atividades
-          const activitiesArray = activitiesData
-            .map(data => ({
-              id: data.id,
-              ...data,
-              timestamp: data.timestamp ? new Date(data.timestamp) : null,
-            }))
-            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)) // Tratamento para evitar erros com timestamps nulos
-            .slice(0, 50); // Limitar a 50 atividades mais recentes
-          setActivities(activitiesArray);
-        } else {
-          setActivities([]);
-        }
+        const activitiesSnapshot = await currentUser.collection('activities').orderBy('timestamp', 'desc').limit(50).get();
+        const activitiesArray = activitiesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          timestamp: doc.data().timestamp ? new Date(doc.data().timestamp) : null,
+        }));
+        setActivities(activitiesArray);
       } catch (activitiesError) {
         console.error('Erro ao carregar atividades:', activitiesError);
         setError(prev => prev + '\nErro ao carregar atividades: ' + activitiesError.message);
@@ -270,22 +252,12 @@ const AdminPanel = ({ isOpen, onClose }) => {
 
       // Carregar status do sistema com tratamento de erro melhorado
       try {
-        // Substituir o uso de Firebase pelo Supabase
-        const { data: statusData, error } = await supabase
-          .from('system')
-          .select('*')
-          .eq('id', 'status')
-          .single();
-          
-        if (error) {
-          throw error;
-        }
-        
-        if (statusData) {
+        const statusDoc = await currentUser.collection('system').doc('status').get();
+        if (statusDoc.exists) {
           setSystemStatus({
             ...systemStatus,
-            ...statusData,
-            lastBackup: statusData.lastBackup ? new Date(statusData.lastBackup) : null,
+            ...statusDoc.data(),
+            lastBackup: statusDoc.data().lastBackup ? new Date(statusDoc.data().lastBackup) : null,
           });
         } else {
           console.log('Documento de status do sistema não existe');
@@ -309,12 +281,12 @@ const AdminPanel = ({ isOpen, onClose }) => {
     
     setIsLoading(true);
     try {
-      await removeData(`users/${uid}`);
+      await currentUser.collection('users').doc(uid).delete();
       setUsers(users.filter(user => user.uid !== uid));
       setMessage(`Usuário ${uid} removido com sucesso!`);
       
       // Registrar atividade
-      await supabase.from('activities').insert({
+      await currentUser.collection('activities').add({
         type: 'user_removed',
         userId: currentUser.uid,
         targetId: uid,
@@ -332,7 +304,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
     
     setIsLoading(true);
     try {
-      await removeData(`${collection}/${id}`);
+      await currentUser.collection(collection).doc(id).delete();
       
       setCollections({
         ...collections,
@@ -342,7 +314,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
       setMessage(`Item ${id} removido da coleção ${collection} com sucesso!`);
       
       // Registrar atividade
-      await supabase.from('activities').insert({
+      await currentUser.collection('activities').add({
         type: 'item_removed',
         userId: currentUser.uid,
         collection,
@@ -365,15 +337,16 @@ const AdminPanel = ({ isOpen, onClose }) => {
       
       // Buscar dados de cada tabela
       for (const table of tables) {
-        const { data: tableData, error } = await supabase
-          .from(table)
-          .select('*');
-          
-        if (error) {
-          console.error(`Erro ao buscar dados da tabela ${table}:`, error);
-        } else {
-          data[table] = tableData;
-        }
+        const collectionRef = currentUser.collection(table);
+        const snapshot = await collectionRef.get();
+        const items = [];
+        snapshot.forEach(doc => {
+          items.push({
+            ...doc.data(),
+            id: doc.id,
+          });
+        });
+        data[table] = items;
       }
       
       if (Object.keys(data).length === 0) {
@@ -394,13 +367,10 @@ const AdminPanel = ({ isOpen, onClose }) => {
       URL.revokeObjectURL(url);
       
       // Atualizar status do sistema
-      const { error } = await supabase
-        .from('system')
-        .upsert({
-          id: 'status',
-          ...systemStatus,
-          lastBackup: Date.now(),
-        });
+      await currentUser.collection('system').doc('status').set({
+        ...systemStatus,
+        lastBackup: Date.now(),
+      });
       
       setSystemStatus({
         ...systemStatus,
@@ -408,7 +378,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
       });
       
       // Registrar atividade
-      await supabase.from('activities').insert({
+      await currentUser.collection('activities').add({
         type: 'backup_created',
         userId: currentUser.uid,
         timestamp: Date.now(),
@@ -439,29 +409,36 @@ const AdminPanel = ({ isOpen, onClose }) => {
           const data = JSON.parse(event.target.result);
           
           // Restaurar dados no banco
-          // Restaurar dados no banco
           // Para cada tabela no backup, inserir os dados
           for (const [table, tableData] of Object.entries(data)) {
             if (tableData && typeof tableData === 'object') {
               // Limpar a tabela primeiro
-              await supabase.from(table).delete().neq('id', '0');
+              const collectionRef = currentUser.collection(table);
+              const snapshot = await collectionRef.where('id', '!=', '0').get();
+              snapshot.forEach(doc => doc.ref.delete());
               
               // Inserir os novos dados
               if (Array.isArray(tableData)) {
-                await supabase.from(table).insert(tableData);
+                await Promise.all(tableData.map(async item => {
+                  const { id, ...rest } = item;
+                  await collectionRef.doc(id).set(rest);
+                }));
               } else {
                 // Converter objeto em array de objetos com id
                 const dataArray = Object.entries(tableData).map(([id, value]) => ({
                   id,
                   ...value
                 }));
-                await supabase.from(table).insert(dataArray);
+                await Promise.all(dataArray.map(async item => {
+                  const { id, ...rest } = item;
+                  await collectionRef.doc(id).set(rest);
+                }));
               }
             }
           }
           
           // Registrar atividade
-          await supabase.from('activities').insert({
+          await currentUser.collection('activities').add({
             type: 'backup_restored',
             userId: currentUser.uid,
             timestamp: Date.now(),
@@ -499,25 +476,15 @@ const AdminPanel = ({ isOpen, onClose }) => {
       if (collection === '/') {
         const tables = ['collections', 'operators', 'users', 'onlineUsers', 'activities'];
         for (const table of tables) {
-          const { error } = await supabase
-            .from(table)
-            .delete()
-            .neq('id', '0'); // Deleta todos os registros exceto o com id '0' (se existir)
-          
-          if (error) {
-            console.error(`Erro ao limpar tabela ${table}:`, error);
-          }
+          const collectionRef = currentUser.collection(table);
+          const snapshot = await collectionRef.where('id', '!=', '0').get();
+          snapshot.forEach(doc => doc.ref.delete());
         }
       } else {
         // Limpar apenas a coleção específica
-        const { error } = await supabase
-          .from(collection)
-          .delete()
-          .neq('id', '0');
-          
-        if (error) {
-          console.error(`Erro ao limpar coleção ${collection}:`, error);
-        }
+        const collectionRef = currentUser.collection(collection);
+        const snapshot = await collectionRef.where('id', '!=', '0').get();
+        snapshot.forEach(doc => doc.ref.delete());
       }
       
       // Atualizar estado local
@@ -531,7 +498,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
       }
       
       // Registrar atividade
-      await supabase.from('activities').insert({
+      await currentUser.collection('activities').add({
         type: 'collection_cleared',
         userId: currentUser.uid,
         collection,

@@ -3,7 +3,6 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { User, Lock, LogIn, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { loginUser, saveData, listenToData } from '../lib/supabase';
 
 const LoginModal = ({ isOpen, onClose, onLogin, users }) => {
   const [username, setUsername] = useState('');
@@ -37,15 +36,15 @@ const LoginModal = ({ isOpen, onClose, onLogin, users }) => {
   useEffect(() => {
     if (isAdmin) {
       // Salvar status de login do administrador
-      saveData('adminStatus', { loggedIn: true, timestamp: new Date().toISOString() });
+      // saveData('adminStatus', { loggedIn: true, timestamp: new Date().toISOString() });
       
       // Escutar mudanças nos dados do sistema
-      const unsubscribe = listenToData('systemData', (data) => {
-        console.log('Dados do sistema atualizados:', data);
-        // Implementar lógica adicional para administrador aqui
-      });
+      // const unsubscribe = listenToData('systemData', (data) => {
+      //   console.log('Dados do sistema atualizados:', data);
+      //   // Implementar lógica adicional para administrador aqui
+      // });
       
-      return () => unsubscribe();
+      // return () => unsubscribe();
     }
   }, [isAdmin]);
 

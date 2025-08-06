@@ -4,14 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useSupabase } from '../contexts/SupabaseContext';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [calendarData, setCalendarData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const { supabase } = useSupabase();
 
   // Gerar dados do calendário para o mês atual
   const calendarDays = useMemo(() => {

@@ -5,7 +5,6 @@ import { Users, Activity, Wifi, WifiOff, Clock, User, Package, AlertTriangle } f
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFirebase } from '../contexts/SupabaseContext';
 import { collection, query, where, orderBy, onSnapshot, serverTimestamp, getDocs } from 'firebase/firestore';
-import { firestore } from '../lib/supabase';
 
 const RealtimeMonitor = () => {
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -16,7 +15,7 @@ const RealtimeMonitor = () => {
     totalUsers: 0,
     activeSessions: 0
   });
-  const { supabase } = useFirebase();
+  const { supabase, firestore } = useFirebase();
 
   useEffect(() => {
     // Monitorar usuários online em tempo real

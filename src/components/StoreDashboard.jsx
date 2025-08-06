@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Package, DivideCircle, AlertTriangle, Maximize2, Minimize2, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
-import { useSupabase } from '../contexts/SupabaseContext';
 
 const StoreDashboard = ({ allCollectionsData, storesConfig }) => {
   const today = new Date().toLocaleDateString('pt-BR');
@@ -10,10 +9,10 @@ const StoreDashboard = ({ allCollectionsData, storesConfig }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Usar dados do Supabase
-  const { collections } = useSupabase();
+  // const { collections } = useSupabase(); // Removido
   
   // Combinar dados do Supabase com dados locais
-  const combinedData = { ...allCollectionsData, ...collections };
+  const combinedData = { ...allCollectionsData }; // Ajustado para usar apenas allCollectionsData
 
   const getStorePeriodData = (storeName, period) => {
     let totalPackages = 0;

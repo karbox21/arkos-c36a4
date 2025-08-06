@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSupabase } from '../contexts/SupabaseContext';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from './ui/card';
@@ -9,10 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Clock, User, Users, RefreshCw, Globe, Wifi, WifiOff } from 'lucide-react';
 import { useToast } from './ui/use-toast.jsx';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import { firestore } from '../lib/supabase';
 
 const OnlineUsersMonitor = () => {
-  const { onlineUsers, lastActivities, supabase } = useSupabase();
   const [localTime, setLocalTime] = useState(new Date());
   const [presenceState, setPresenceState] = useState({});
   const [isConnected, setIsConnected] = useState(true);
