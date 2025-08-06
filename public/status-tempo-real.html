@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Compartilhamento em Tempo Real - Sistema Arkos</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --secondary: #3b82f6;
+            --accent: #10b981;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--primary-light);
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--secondary);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .status-container {
+            padding: 1.5rem;
+        }
+
+        .status-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .status-icon.success {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .status-icon.warning {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-icon.danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .status-icon.info {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+        }
+
+        .status-content {
+            flex: 1;
+        }
+
+        .status-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-description {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .badge.success {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .badge.warning {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .badge.danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .badge.info {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+        }
+
+        .users-list {
+            margin-top: 1rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .refresh-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                width: 100%;
+            }
+
+            .status-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Status do Compartilhamento em Tempo Real</h1>
+            <p class="subtitle">Sistema Arkos</p>
+        </header>
+        <div class="status-container">
+            <div class="status-card">
+                <div class="status-icon success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div class="status-content">
+                    <div class="status-title">Servidor em Execução <span class="badge success">Online</span></div>
+                    <p class="status-description">O servidor está em execução e acessível na rede local.</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon info">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <div class="status-content">
+                    <div class="status-title">Informações de Acesso</div>
+                    <p class="status-description">
+                        Endereço IP: <strong id="server-ip">Carregando...</strong><br>
+                        Porta: <strong>5174</strong><br>
+                        URL de Acesso: <strong id="access-url">Carregando...</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="status-content">
+                    <div class="status-title">Usuários Online <span class="badge info" id="users-count">0</span></div>
+                    <p class="status-description">Usuários atualmente conectados ao sistema.</p>
+                    
+                    <div class="users-list" id="users-list">
+                        <!-- Os usuários serão adicionados dinamicamente via JavaScript -->
+                        <div class="user-item">
+                            <div class="user-avatar">A</div>
+                            <div class="user-info">
+                                <div class="user-name">Administrador</div>
+                                <div class="user-status">
+                                    <span class="status-dot"></span>
+                                    Online agora
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="refresh-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6"></path>
+                        <path d="M1 20v-6h6"></path>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Atualizar Status
+                </button>
+                <button class="btn btn-outline" id="open-system-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    Abrir Sistema
+                </button>
+            </div>
+
+            <div class="refresh-time" id="refresh-time">
+                Última atualização: Nunca
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Sistema Arkos - Compartilhamento em Tempo Real &copy; 2023
+    </div>
+
+    <script>
+        // Função para obter o endereço IP do servidor
+        async function getServerIP() {
+            try {
+                // Usar uma abordagem mais confiável para obter o IP local
+                return window.location.hostname || 'localhost';
+            } catch (error) {
+                console.error('Erro ao obter IP:', error);
+                return 'localhost';
+            }
+        }
+
+        // Função para formatar data relativa
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+
+            if (diff < 60) return 'agora mesmo';
+            if (diff < 3600) return `${Math.floor(diff / 60)} minutos atrás`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} horas atrás`;
+            return `${Math.floor(diff / 86400)} dias atrás`;
+        }
+
+        // Função para atualizar a interface
+        async function updateUI() {
+            const ip = await getServerIP();
+            document.getElementById('server-ip').textContent = ip;
+            document.getElementById('access-url').textContent = `http://${ip}:5174/?auto_login=true&realtime=true`;
+            
+            // Atualizar horário de atualização
+            const now = new Date();
+            document.getElementById('refresh-time').textContent = `Última atualização: ${now.toLocaleTimeString()}`;
+
+            // Simular obtenção de usuários online (em um sistema real, isso viria do servidor)
+            fetchOnlineUsers();
+        }
+
+        // Função para buscar usuários online
+        async function fetchOnlineUsers() {
+            try {
+                // Em um sistema real, isso seria uma chamada à API
+                // Simulando dados para demonstração
+                const users = [
+                    { id: 1, name: 'Administrador', lastSeen: new Date() },
+                    { id: 2, name: 'Usuário Teste', lastSeen: new Date(Date.now() - 5 * 60 * 1000) }
+                ];
+
+                // Atualizar contador de usuários
+                document.getElementById('users-count').textContent = users.length;
+
+                // Limpar lista de usuários
+                const usersList = document.getElementById('users-list');
+                usersList.innerHTML = '';
+
+                // Adicionar usuários à lista
+                users.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    userItem.innerHTML = `
+                        <div class="user-avatar">${user.name.charAt(0)}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-status">
+                                <span class="status-dot"></span>
+                                ${formatRelativeTime(user.lastSeen)}
+                            </div>
+                        </div>
+                    `;
+                    usersList.appendChild(userItem);
+                });
+
+                // Se não houver usuários, mostrar mensagem
+                if (users.length === 0) {
+                    const emptyMessage = document.createElement('div');
+                    emptyMessage.className = 'user-item';
+                    emptyMessage.innerHTML = `
+                        <div class="user-info">
+                            <div class="user-name">Nenhum usuário online</div>
+                            <div class="user-status">Os usuários aparecerão aqui quando estiverem conectados</div>
+                        </div>
+                    `;
+                    usersList.appendChild(emptyMessage);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar usuários:', error);
+            }
+        }
+
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            // Atualizar UI inicialmente
+            updateUI();
+
+            // Configurar botão de atualização
+            document.getElementById('refresh-btn').addEventListener('click', updateUI);
+
+            // Configurar botão para abrir o sistema
+            document.getElementById('open-system-btn').addEventListener('click', async () => {
+                const ip = await getServerIP();
+                window.open(`http://${ip}:5174/?auto_login=true&realtime=true`, '_blank');
+            });
+
+            // Atualizar a cada 30 segundos
+            setInterval(updateUI, 30000);
+        });
+    </script>
+</body>
+</html>

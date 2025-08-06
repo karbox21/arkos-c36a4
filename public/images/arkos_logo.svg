@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="rocket-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a" />
+      <stop offset="50%" style="stop-color:#1e40af" />
+      <stop offset="100%" style="stop-color:#3b82f6" />
+    </linearGradient>
+    <linearGradient id="globe-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0ea5e9" />
+      <stop offset="100%" style="stop-color:#38bdf8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Globe -->
+  <circle cx="100" cy="100" r="40" fill="url(#globe-gradient)" />
+  
+  <!-- Continents -->
+  <path d="M80,80 Q95,70 110,85 T125,95 Q115,110 95,115 T75,105 Q70,90 80,80 Z" fill="white" opacity="0.6" />
+  <path d="M90,70 Q100,65 105,75 T110,90 Q105,95 95,90 T85,80 Q85,75 90,70 Z" fill="white" opacity="0.6" />
+  
+  <!-- Rocket -->
+  <path d="M120,60 L160,20 L200,60 L180,80 L180,140 L160,160 L140,140 L140,80 Z" fill="url(#rocket-gradient)" />
+  
+  <!-- Rocket Window -->
+  <circle cx="160" cy="90" r="10" fill="white" />
+  
+  <!-- Rocket Flames -->
+  <path d="M140,140 L130,160 L120,190 L140,170 L160,190 L180,170 L200,190 L190,160 L180,140" fill="#7c3aed" opacity="0.8" />
+  <path d="M145,150 L135,170 L130,190 L145,175 L160,195 L175,175 L190,190 L185,170 L175,150" fill="#8b5cf6" opacity="0.6" />
+  
+  <!-- ARKOS Text -->
+  <text x="150" y="220" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#0284c7">ARKOS</text>
+  
+  <!-- Subtitle -->
+  <text x="150" y="240" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#0284c7">e-commerce package manifest system</text>
+</svg>

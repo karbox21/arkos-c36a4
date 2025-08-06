@@ -1,0 +1,371 @@
+
+/* Import Tailwind base styles */
+@import 'tailwindcss/base';
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+:root {
+  --background-light: 220 20% 92%; /* Cinza claro neutro para reduzir cansaço visual */
+  --foreground-light: 225 25% 12%; /* Texto mais escuro para melhor contraste */
+  --card-light: 220 20% 96%; /* Cinza muito claro neutro */
+  --card-foreground-light: 225 25% 12%;
+  --popover-light: 220 20% 96%;
+  --popover-foreground-light: 225 25% 12%;
+  --primary-light: 210 85% 40%; /* Azul NASA mais escuro */
+  --primary-foreground-light: 0 0% 100%; /* Branco */
+  --secondary-light: 220 20% 88%; /* Cinza neutro */
+  --secondary-foreground-light: 225 25% 18%; /* Texto mais escuro */
+  --muted-light: 220 20% 82%;
+  --muted-foreground-light: 225 25% 32%; /* Melhor contraste */
+  --accent-light: 205 75% 80%; /* Azul neutro para acentos */
+  --accent-foreground-light: 210 85% 30%; /* Texto de acento mais escuro */
+  --destructive-light: 0 80% 40%; /* Vermelho mais escuro */
+  --destructive-foreground-light: 0 0% 100%;
+  --border-light: 220 20% 70%; /* Bordas mais visíveis */
+  --input-light: 220 20% 70%; /* Bordas de input mais visíveis */
+  --ring-light: 210 85% 40%; /* Correspondendo ao primário */
+  --radius: 0.75rem; /* Raio maior para um visual mais moderno */
+
+  --background-dark: 225 12% 6%; /* Azul escuro profundo com gradiente */
+  --foreground-dark: 220 18% 96%; /* Texto mais claro para melhor legibilidade */
+  --card-dark: 225 12% 10%; /* Fundo de card mais escuro */
+  --card-foreground-dark: 220 18% 96%;
+  --popover-dark: 225 12% 10%;
+  --popover-foreground-dark: 220 18% 96%;
+  --primary-dark: 210 90% 60%; /* Azul NASA vibrante */
+  --primary-foreground-dark: 225 8% 6%; /* Mais escuro para melhor contraste */
+  --secondary-dark: 225 12% 16%; /* Secundário mais claro */
+  --secondary-foreground-dark: 220 18% 92%;
+  --muted-dark: 225 12% 16%;
+  --muted-foreground-dark: 220 12% 72%; /* Texto muted mais brilhante */
+  --accent-dark: 210 90% 55%; /* Acento vibrante */
+  --accent-foreground-dark: 0 0% 100%; 
+  --destructive-dark: 0 75% 55%; /* Vermelho vibrante */
+  --destructive-foreground-dark: 0 0% 100%;
+  --border-dark: 225 12% 22%; /* Bordas mais visíveis */
+  --input-dark: 225 12% 18%; /* Input melhorado */
+  --ring-dark: 210 90% 60%; /* Correspondendo ao primário */
+}
+
+@layer base {
+  :root {
+    --background: var(--background-light);
+    --foreground: var(--foreground-light);
+    --card: var(--card-light);
+    --card-foreground: var(--card-foreground-light);
+    --popover: var(--popover-light);
+    --popover-foreground: var(--popover-foreground-light);
+    --primary: var(--primary-light);
+    --primary-foreground: var(--primary-foreground-light);
+    --secondary: var(--secondary-light);
+    --secondary-foreground: var(--secondary-foreground-light);
+    --muted: var(--muted-light);
+    --muted-foreground: var(--muted-foreground-light);
+    --accent: var(--accent-light);
+    --accent-foreground: var(--accent-foreground-light);
+    --destructive: var(--destructive-light);
+    --destructive-foreground: var(--destructive-foreground-light);
+    --border: var(--border-light);
+    --input: var(--input-light);
+    --ring: var(--ring-light);
+    --radius: var(--radius);
+  }
+
+  .dark {
+    --background: var(--background-dark);
+    --foreground: var(--foreground-dark);
+    --card: var(--card-dark);
+    --card-foreground: var(--card-foreground-dark);
+    --popover: var(--popover-dark);
+    --popover-foreground: var(--popover-foreground-dark);
+    --primary: var(--primary-dark);
+    --primary-foreground: var(--primary-foreground-dark);
+    --secondary: var(--secondary-dark);
+    --secondary-foreground: var(--secondary-foreground-dark);
+    --muted: var(--muted-dark);
+    --muted-foreground: var(--muted-foreground-dark);
+    --accent: var(--accent-dark);
+    --accent-foreground: var(--accent-foreground-dark);
+    --destructive: var(--destructive-dark);
+    --destructive-foreground: var(--destructive-foreground-dark);
+    --border: var(--border-dark);
+    --input: var(--input-dark);
+    --ring: var(--ring-dark);
+  }
+}
+
+@layer components {
+  .arkos-card {
+    @apply bg-card rounded-xl shadow-lg border border-border p-4 sm:p-6 transition-all duration-300;
+  }
+  
+  .arkos-title-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent-foreground;
+  }
+  
+  .arkos-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent-foreground font-bold;
+  }
+  
+  .arkos-button-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
+  }
+  
+  .arkos-button-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors;
+  }
+  
+  .arkos-input {
+    @apply border-2 border-input focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all duration-200;
+  }
+  
+  .arkos-toast-info {
+    @apply bg-primary/10 border-primary text-foreground;
+  }
+  
+  .arkos-toast-success {
+    @apply bg-green-500/10 border-green-500 text-foreground;
+  }
+  
+  .arkos-toast-error {
+    @apply bg-destructive/10 border-destructive text-foreground;
+  }
+}
+
+.light {
+  --background: var(--background-light);
+  --foreground: var(--foreground-light);
+  --card: var(--card-light);
+  --card-foreground: var(--card-foreground-light);
+  --popover: var(--popover-light);
+  --popover-foreground: var(--popover-foreground-light);
+  --primary: var(--primary-light);
+  --primary-foreground: var(--primary-foreground-light);
+  --secondary: var(--secondary-light);
+  --secondary-foreground: var(--secondary-foreground-light);
+  --muted: var(--muted-light);
+  --muted-foreground: var(--muted-foreground-light);
+  --accent: var(--accent-light);
+  --accent-foreground: var(--accent-foreground-light);
+  --destructive: var(--destructive-light);
+  --destructive-foreground: var(--destructive-foreground-light);
+  --border: var(--border-light);
+  --input: var(--input-light);
+  --ring: var(--ring-light);
+  
+  /* Tema claro com gradientes discretos */
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #1a202c;
+}
+
+.dark {
+  --background: var(--background-dark);
+  --foreground: var(--foreground-dark);
+  --card: var(--card-dark);
+  --card-foreground: var(--card-foreground-dark);
+  --popover: var(--popover-dark);
+  --popover-foreground: var(--popover-foreground-dark);
+  --primary: var(--primary-dark);
+  --primary-foreground: var(--primary-foreground-dark);
+  --secondary: var(--secondary-dark);
+  --secondary-foreground: var(--secondary-foreground-dark);
+  --muted: var(--muted-dark);
+  --muted-foreground: var(--muted-foreground-dark);
+  --accent: var(--accent-dark);
+  --accent-foreground: var(--accent-foreground-dark);
+  --destructive: var(--destructive-dark);
+  --destructive-foreground: var(--destructive-foreground-dark);
+  --border: var(--border-dark);
+  --input: var(--input-dark);
+  --ring: var(--ring-dark);
+  
+  /* Tema escuro com gradientes discretos */
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: -0.025em; /* Slightly tighter for Orbitron */
+}
+
+/* Custom scrollbar for webkit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--secondary) / 0.7);
+  border-radius: var(--radius);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.6);
+  border-radius: var(--radius);
+  border: 2px solid hsl(var(--secondary) / 0.7);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+.arkos-title-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600;
+  filter: drop-shadow(0 2px 3px hsl(var(--primary) / 0.3));
+}
+.dark .arkos-title-gradient {
+  @apply from-sky-300 via-blue-400 to-indigo-500;
+   filter: drop-shadow(0 2px 5px hsl(var(--primary) / 0.5));
+}
+
+
+.arkos-gradient-text { /* For other highlighted texts */
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-sky-500 to-cyan-500;
+}
+.dark .arkos-gradient-text {
+  @apply from-primary via-sky-400 to-cyan-400;
+}
+
+
+.arkos-input {
+  @apply bg-input border-border placeholder-muted-foreground text-foreground 
+  focus:ring-2 focus:ring-ring focus:border-transparent 
+  transition-all duration-200 ease-in-out shadow-sm;
+  border-radius: var(--radius);
+}
+.arkos-input:focus {
+   box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3);
+}
+
+
+.arkos-button-primary {
+ @apply bg-primary text-primary-foreground hover:bg-primary/85 
+  transition-all duration-200 ease-in-out transform hover:scale-[1.03]
+  shadow-md hover:shadow-lg focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.arkos-button-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 
+  border border-border hover:border-primary/50
+  transition-all duration-200 ease-in-out
+  shadow-sm hover:shadow-md focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.arkos-button-destructive {
+  @apply bg-destructive text-destructive-foreground hover:bg-destructive/85 
+  transition-all duration-200 ease-in-out transform hover:scale-[1.03]
+  shadow-md hover:shadow-lg focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.arkos-button-trello {
+  @apply bg-gradient-to-r from-teal-500 to-cyan-600 text-white hover:from-teal-600 hover:to-cyan-700
+  transition-all duration-200 ease-in-out transform hover:scale-[1.03]
+  shadow-md hover:shadow-lg focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+.dark .arkos-button-trello {
+   @apply text-gray-900; /* Dark text on light gradient for dark mode */
+}
+
+
+.arkos-card {
+  @apply bg-card text-card-foreground shadow-2xl rounded-2xl p-5 sm:p-8 
+  border border-border/30;
+}
+.dark .arkos-card {
+   border-color: hsl(var(--border-dark) / 0.5);
+}
+
+
+.arkos-list-item {
+ @apply flex items-center justify-between p-3.5 bg-secondary/60 rounded-lg shadow-md hover:shadow-primary/20 
+ transition-all duration-200 ease-in-out border border-transparent hover:border-primary/30;
+}
+.dark .arkos-list-item {
+  @apply bg-secondary/40;
+}
+
+.arkos-list-item-duplicate {
+  @apply flex items-center justify-between p-3.5 bg-destructive/20 rounded-lg shadow-md text-destructive-foreground 
+  border border-destructive/50;
+}
+.dark .arkos-list-item-duplicate {
+   @apply bg-destructive/30 text-red-200;
+}
+
+
+.arkos-modal-overlay {
+  @apply fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4;
+}
+
+.arkos-modal-content {
+  @apply bg-card p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md m-4 border border-border/50;
+}
+
+/* Toast styling */
+.arkos-toast-success {
+  @apply bg-green-600 border-green-700 text-white;
+}
+.arkos-toast-success .lucide { @apply text-white; }
+
+.arkos-toast-info {
+  @apply bg-sky-600 border-sky-700 text-white;
+}
+.arkos-toast-info .lucide { @apply text-white; }
+
+.arkos-toast-destructive {
+background-color: hsl(var(--destructive));
+border-color: hsl(var(--destructive) / 0.8);
+color: hsl(var(--destructive-foreground));
+}
+.arkos-toast-destructive .lucide { @apply text-destructive-foreground; }
+
+/* Ensure toast titles and descriptions also get the right color */
+.arkos-toast-success > div > [data-radix-toast-title],
+.arkos-toast-success > div > [data-radix-toast-description] {
+  @apply text-white;
+}
+.arkos-toast-info > div > [data-radix-toast-title],
+.arkos-toast-info > div > [data-radix-toast-description] {
+  @apply text-white;
+}
+.arkos-toast-destructive > div > [data-radix-toast-title],
+.arkos-toast-destructive > div > [data-radix-toast-description] {
+  @apply text-destructive-foreground;
+}
+
+/* Specific styling for OperatorManager and StoreDashboard cards */
+.operator-manager-card, .store-dashboard-card {
+  @apply mt-6 mb-6 p-4 sm:p-6 bg-secondary/40 dark:bg-secondary/20 rounded-xl shadow-lg border border-border/20;
+}
