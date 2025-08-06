@@ -1,7 +1,13 @@
 import React from 'react';
 
-const TRELLO_API_KEY_PRIMARY = '39df40bdc71c98d2ca8c8e5fe97c0e1f';
-const TRELLO_TOKEN_PRIMARY = 'ATTA848155f599628c1b523688f853cd8515bf01cd1bf587b7aa5b0fa980198becdd5FD4015B';
+// ====================================================================
+// Linhas modificadas:
+// Agora, as chaves e tokens são lidos de forma segura do seu arquivo .env
+// ====================================================================
+const TRELLO_API_KEY_PRIMARY = import.meta.env.VITE_TRELLO_API_KEY_PRIMARY;
+const TRELLO_TOKEN_PRIMARY = import.meta.env.VITE_TRELLO_TOKEN_PRIMARY;
+// ====================================================================
+
 
 const TRELLO_BOARD_ID_SHARED = '645e2f9ff81077eae3eb42db'; 
 const TRELLO_LIST_NAME_DEFAULT = 'ENTRADA';
