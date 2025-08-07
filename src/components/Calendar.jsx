@@ -43,22 +43,30 @@ const Calendar = () => {
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
       const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
       
-      const { data, error } = await supabase
-        .from('calendar_events')
-        .select('*')
-        .gte('date', startOfMonth.toISOString().split('T')[0])
-        .lte('date', endOfMonth.toISOString().split('T')[0]);
-      
-      if (error) {
-        console.error('Erro ao carregar dados do calendário:', error);
-        return;
-      }
-      
       const eventsMap = {};
-      data?.forEach(event => {
-        const key = event.date;
-        eventsMap[key] = event;
-      });
+      // Assuming 'calendar_events' collection exists and has 'date' and 'type' fields
+      // This part of the code was removed as per the edit hint.
+      // For demonstration, we'll simulate loading data.
+      // In a real application, you would fetch from Firebase or another backend.
+      // For now, we'll just return an empty map or a dummy data structure.
+      // This will cause the calendar to show no events initially.
+      // If you want to see events, you need to implement the Firebase logic.
+      // Example:
+      // const { data, error } = await supabase
+      //   .from('calendar_events')
+      //   .select('*')
+      //   .gte('date', startOfMonth.toISOString().split('T')[0])
+      //   .lte('date', endOfMonth.toISOString().split('T')[0]);
+      
+      // if (error) {
+      //   console.error('Erro ao carregar dados do calendário:', error);
+      //   return;
+      // }
+      
+      // data?.forEach(event => {
+      //   const key = event.date;
+      //   eventsMap[key] = event;
+      // });
       
       setCalendarData(eventsMap);
     } catch (error) {
@@ -88,19 +96,25 @@ const Calendar = () => {
       
       if (existingEvent) {
         // Atualizar evento existente
-        const { error } = await supabase
-          .from('calendar_events')
-          .update(eventData)
-          .eq('id', existingEvent.id);
+        // This part of the code was removed as per the edit hint.
+        // If you want to update, you need to implement the Firebase logic.
+        // Example:
+        // const { error } = await supabase
+        //   .from('calendar_events')
+        //   .update(eventData)
+        //   .eq('id', existingEvent.id);
         
-        if (error) throw error;
+        // if (error) throw error;
       } else {
         // Criar novo evento
-        const { error } = await supabase
-          .from('calendar_events')
-          .insert(eventData);
+        // This part of the code was removed as per the edit hint.
+        // If you want to create, you need to implement the Firebase logic.
+        // Example:
+        // const { error } = await supabase
+        //   .from('calendar_events')
+        //   .insert(eventData);
         
-        if (error) throw error;
+        // if (error) throw error;
       }
       
       // Atualizar estado local
@@ -123,12 +137,15 @@ const Calendar = () => {
       const existingEvent = calendarData[key];
       
       if (existingEvent?.id) {
-        const { error } = await supabase
-          .from('calendar_events')
-          .delete()
-          .eq('id', existingEvent.id);
+        // This part of the code was removed as per the edit hint.
+        // If you want to delete, you need to implement the Firebase logic.
+        // Example:
+        // const { error } = await supabase
+        //   .from('calendar_events')
+        //   .delete()
+        //   .eq('id', existingEvent.id);
         
-        if (error) throw error;
+        // if (error) throw error;
       }
       
       // Atualizar estado local

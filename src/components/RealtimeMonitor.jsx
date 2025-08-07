@@ -15,7 +15,7 @@ const RealtimeMonitor = () => {
     totalUsers: 0,
     activeSessions: 0
   });
-  const { supabase, firestore } = useFirebase();
+  const { firestore } = useFirebase();
 
   useEffect(() => {
     // Monitorar usuários online em tempo real

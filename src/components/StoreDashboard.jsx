@@ -18,12 +18,19 @@ const StoreDashboard = ({ allCollectionsData, storesConfig }) => {
     let totalPackages = 0;
     let totalDuplicates = 0;
 
-    Object.values(combinedData).forEach(collection => {
-      if (collection.store === storeName && collection.period === period && collection.date === today) {
-        totalPackages += collection.packages ? collection.packages.length : 0;
-        totalDuplicates += collection.duplicates ? collection.duplicates.length : 0;
-      }
-    });
+    // Verificar se combinedData é um objeto válido
+    if (combinedData && typeof combinedData === 'object') {
+      Object.values(combinedData).forEach(collection => {
+        // Verificar se collection é um objeto válido antes de acessar suas propriedades
+        if (collection && typeof collection === 'object' && 
+            collection.store === storeName && 
+            collection.period === period && 
+            collection.date === today) {
+          totalPackages += collection.packages && Array.isArray(collection.packages) ? collection.packages.length : 0;
+          totalDuplicates += collection.duplicates && Array.isArray(collection.duplicates) ? collection.duplicates.length : 0;
+        }
+      });
+    }
     return { totalPackages, totalDuplicates };
   };
   
@@ -34,6 +41,12 @@ const StoreDashboard = ({ allCollectionsData, storesConfig }) => {
   };
 
   const renderStoreCard = (store, isExpanded = false) => {
+    // Verificar se store é um objeto válido e tem a propriedade name
+    if (!store || typeof store !== 'object' || !store.name) {
+      console.error('Store inválida:', store);
+      return null;
+    }
+    
     const dataManha = getStorePeriodData(store.name, 'Manha');
     const dataTarde = getStorePeriodData(store.name, 'Tarde');
     
@@ -117,7 +130,11 @@ const StoreDashboard = ({ allCollectionsData, storesConfig }) => {
         {selectedStore ? (
           renderStoreCard(selectedStore, true)
         ) : (
-          storesConfig.map(store => renderStoreCard(store))
+          Array.isArray(storesConfig) 
+            ? storesConfig.map(store => renderStoreCard(store))
+            : <div className="col-span-full text-center p-4 bg-red-100 dark:bg-red-900/20 rounded-lg">
+                <p className="text-red-600 dark:text-red-400">Erro: Configuração de lojas inválida</p>
+              </div>
         )}
       </div>
       

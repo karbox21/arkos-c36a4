@@ -151,11 +151,10 @@ const App = () => {
       setScannedPackages(currentCollection.packages || []);
       setDuplicatePackages(currentCollection.duplicates || []);
     }
-    const supabaseData = collections[currentCollectionName];
     const localData = allCollectionsData[currentCollectionName] || { packages: [], duplicates: [] };
     
     // Priorizar dados do Supabase se existirem
-    const collectionData = supabaseData || localData;
+    const collectionData = collections[currentCollectionName] || localData;
     
     // Garantir que packages e duplicates sejam sempre arrays
     const packagesArray = Array.isArray(collectionData.packages) ? collectionData.packages : [];
@@ -165,7 +164,7 @@ const App = () => {
     setDuplicatePackages(duplicatesArray);
     
     // Se temos dados locais mas não no Supabase, sincronizar para o Supabase
-    if (localData && localData.packages && localData.packages.length > 0 && !supabaseData) {
+    if (localData && localData.packages && localData.packages.length > 0 && !collections[currentCollectionName]) {
       saveCollection(currentCollectionName, localData);
     }
   }, [currentCollectionName, allCollectionsData, collections, saveCollection]);
@@ -1193,7 +1192,10 @@ const App = () => {
               showResetAllButton={false} 
           />
           
-          <StoreDashboard allCollectionsData={allCollectionsData} storesConfig={storesConfig} />
+          <StoreDashboard 
+            allCollectionsData={allCollectionsData || {}} 
+            storesConfig={storesConfig || []} 
+          />
 
         </motion.div>
         ) : (
